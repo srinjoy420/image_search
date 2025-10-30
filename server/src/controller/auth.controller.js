@@ -106,7 +106,7 @@ export const login = async (req, res) => {
         };
         console.log("✅ User registered successfully:", userResponse.id);
 
-        res.status(201).json(new ApiResponse(201, { user: userResponse }, "User registered successfully"));
+        res.status(201).json(new ApiResponse(201, { user: userResponse }, "User loggedin successfully"));
 
     } catch (error) {
         console.log("error in login", error);

@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import connectDB from './db/db.js'
 import authroute from './routes/user.route.js'
+import imageroute from './routes/image.routes.js'
 
 dotenv.config()
 
@@ -16,6 +17,7 @@ app.get('/', (req, res) => {
 })
 
 app.use("/api/auth",authroute)
+app.use("/api/image",imageroute)
 connectDB()
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
