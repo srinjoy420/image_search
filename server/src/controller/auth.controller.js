@@ -139,12 +139,33 @@ export const logout = async (req, res) => {
             }
         }
         console.log(" User logged out successfully");
-         res.status(201).json(new ApiResponse(201,  "User loggedot successfully"));
+        res.status(201).json(new ApiResponse(201, "User loggedot successfully"));
     }
     catch (error) {
-        console.log("failour in logout",error);
-        throw new ApiError("userer loggegout failed",400)
-        
+        console.log("failour in logout", error);
+        throw new ApiError("userer loggegout failed", 400)
+
 
     }
+}
+
+export const checkauth = async (req, res) => {
+   try {
+     const user = await User.findById(req.user._id)
+     if (!user) {
+         throw new ApiError("user not found", 400)
+     }
+     const userResponse = {
+         id: user._id,
+         name: user.name,
+         email: user.email,
+ 
+     };
+     console.log("find the verified user", userResponse.id);
+
+        res.status(200).json(new ApiResponse(200, userResponse, "User verified successfully"));
+ 
+   } catch (error) {
+    
+   }
 }

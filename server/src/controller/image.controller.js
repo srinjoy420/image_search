@@ -68,8 +68,8 @@ export const getImagebyName=async(req,res)=>{
       return res.status(200).json({ success: true, data: [] });
     }
           const images = await Image.find({
-      name: { $regex: name, $options: "i" }, // case-insensitive search
-    }).limit(5);; // limit suggestions
+      name: { $regex: name, $options: "i" }, 
+    }).limit(5);; 
    
        res.json({ success: true, data: images });
  } catch (error) {
