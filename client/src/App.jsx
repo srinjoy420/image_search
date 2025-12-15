@@ -24,7 +24,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={authUser ? <ImagePage /> : <Navigate to={"/login"}/>}/>
         <Route path="/singup" element={<SingupPage/>}/>
-        <Route path="/login" element={<LoginPage/>}/>
+        <Route path="/login" element={!authUser ? <LoginPage /> :<Navigate to={"/"}/>}/>
         <Route/>
       </Routes>
     </div>

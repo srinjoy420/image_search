@@ -159,13 +159,15 @@ export const checkauth = async (req, res) => {
          id: user._id,
          name: user.name,
          email: user.email,
- 
      };
      console.log("find the verified user", userResponse.id);
 
-        res.status(200).json(new ApiResponse(200, userResponse, "User verified successfully"));
+     // Fix: Wrap userResponse in an object with 'user' key to match signup/login structure
+     res.status(200).json(new ApiResponse(200, { user: userResponse }, "User verified successfully"));
  
    } catch (error) {
-    
+     // Fix: Add proper error handling
+     console.log("❌ Error in checkauth:", error);
+     throw new ApiError("Failed to verify user", 400);
    }
 }
