@@ -3,6 +3,8 @@ import { create } from "zustand"
 import toast from "react-hot-toast"
 
 
+
+
 export const useImageStore = create((set, get) => ({
     images: [],
     isLoadingImages: false,
@@ -39,6 +41,53 @@ export const useImageStore = create((set, get) => ({
         }
         finally {
             set({ isLoadingImages: false })
+        }
+
+    },
+
+    fetchingallImages: async () => {
+        set({ isFetchingImages: true, error: null })
+        try {
+            const res = await axiosInstance.get("/api/image/getall")
+            if (res.data.success) {
+                set({ images: res.data.data, error: null })
+            }
+            else {
+                set({ error: res.data.message })
+
+            }
+        } catch (error) {
+            const errorMessage = error.response?.data?.message
+            console.log("❌ image fetching failed:", errorMessage || error.message);
+
+            set({ error: errorMessage || "fetching error image" })
+
+        }
+        finally {
+            set({ isFetchingImages: false })
+
+        }
+
+    },
+    searcbyname: async (name) => {
+        if (!name) {
+            return
+        }
+        try {
+            const res = await axiosInstance.get(`/api/image/search?name=${name}`)
+            if (res.data.success) {
+                set({ images: res.data.data, error: null })
+            }
+            else {
+                set({ error: res.data.message })
+
+            }
+        } catch (error) {
+            const errorMessage = error.response?.data?.message
+            console.log("❌ image fetching failed:", errorMessage || error.message);
+
+            set({ error: errorMessage || "image fetching error" })
+
         }
 
     }

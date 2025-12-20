@@ -5,6 +5,7 @@ import SingupPage from './pages/SingupPage'
 import LoginPage from './pages/LoginPage'
 import ImagePage from './pages/ImagePage'
 import { useauthStore } from './store/useauthstore'
+import FetchallImage from './pages/FetchallImage'
 
 
 
@@ -25,7 +26,7 @@ const App = () => {
         <Route path='/' element={authUser ? <ImagePage /> : <Navigate to={"/login"}/>}/>
         <Route path="/singup" element={<SingupPage/>}/>
         <Route path="/login" element={!authUser ? <LoginPage /> :<Navigate to={"/"}/>}/>
-        <Route/>
+        <Route path='/images' element={<FetchallImage/>}/>
       </Routes>
     </div>
   )

@@ -46,41 +46,41 @@ export const UploadImage = async (req, res) => {
   }
 };
 
-export const getallImages=async(req,res)=>{
- try {
-       const user=await User.findById(req.user._id)
-       if(!user){
-        throw new ApiError("user not found",404)
-       }
-       const images=await Image.find().populate("addedby","name email")
-   
-       if(images.length===0){
-           throw new ApiError("no images found",404)
-       }
-         res.status(200).json(new ApiResponse(200,images,"images fetched successfully"))
- } catch (error) {
-    console.log("cant load the images",error);
-    
-    throw new ApiError("failed to fetch images",500)
-    
- }
-    
+export const getallImages = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+    if (!user) {
+      throw new ApiError("user not found", 404)
+    }
+    const images = await Image.find().populate("addedby", "name email")
+
+    if (images.length === 0) {
+      throw new ApiError("no images found", 404)
+    }
+    res.status(200).json(new ApiResponse(200, images, "images fetched successfully"))
+  } catch (error) {
+    console.log("cant load the images", error);
+
+    throw new ApiError("failed to fetch images", 500)
+
+  }
+
 }
-export const getImagebyName=async(req,res)=>{
- try {
-       const {name}=req.query
-       
+export const getImagebyName = async (req, res) => {
+  try {
+    const { name } = req.query
+
     if (!name) {
       return res.status(200).json({ success: true, data: [] });
     }
-          const images = await Image.find({
-      name: { $regex: name, $options: "i" }, 
-    }).limit(5);; 
-   
-       res.json({ success: true, data: images });
- } catch (error) {
-    console.log("error in searching image by name",error);
-    throw new ApiError("failed to fetch images",500)
- }
+    const images = await Image.find({
+      name: { $regex: name, $options: "i" },
+    }).limit(5).populate("addedby", "name email");
+
+    return res.json({ success: true, data: images });
+  } catch (error) {
+    console.log("error in searching image by name", error);
+    throw new ApiError("failed to fetch images", 500)
+  }
 
 }
