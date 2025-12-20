@@ -5,13 +5,18 @@ import toast from "react-hot-toast"
 
 
 
+
 export const useImageStore = create((set, get) => ({
     images: [],
     isLoadingImages: false,
     isFetchingImages: false,
+    isFetchingSuggestions: false,
     error: null,
+    suggestions: [],
 
     clearError: () => set({ error: null }),
+
+    clearSuggestions: () => set({ suggestions: [] }),
 
     uploadImage: async ({ imageBase64, name }) => {
         set({ isLoadingImages: true, error: null })
@@ -69,14 +74,41 @@ export const useImageStore = create((set, get) => ({
         }
 
     },
-    searcbyname: async (name) => {
-        if (!name) {
+
+    fetchSuggestions: async (name) => {
+        if (!name || !name.trim()) {
+            set({ suggestions: [], isFetchingSuggestions: false })
             return
         }
+        set({ isFetchingSuggestions: true, error: null })
+        try {
+            const res = await axiosInstance.get(`/api/image/search?name=${name}`)
+            if (res.data.success) {
+                set({ suggestions: res.data.data, error: null })
+            }
+            else {
+                set({ suggestions: [], error: res.data.message })
+            }
+        } catch (error) {
+            const errorMessage = error.response?.data?.message
+            console.log("❌ suggestions fetching failed:", errorMessage || error.message);
+            set({ suggestions: [], error: errorMessage || "suggestions fetching error" })
+        }
+        finally {
+            set({ isFetchingSuggestions: false })
+        }
+    },
+    searcbyname: async (name) => {
+        if (!name || !name.trim()) {
+            set({ images: [], error: null, isFetchingImages: false })
+            return
+        }
+        set({ isFetchingImages: true, error: null })
         try {
             const res = await axiosInstance.get(`/api/image/search?name=${name}`)
             if (res.data.success) {
                 set({ images: res.data.data, error: null })
+
             }
             else {
                 set({ error: res.data.message })
@@ -88,6 +120,9 @@ export const useImageStore = create((set, get) => ({
 
             set({ error: errorMessage || "image fetching error" })
 
+        }
+        finally {
+            set({ isFetchingImages: false })
         }
 
     }

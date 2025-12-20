@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import ImagePage from './pages/ImagePage'
 import { useauthStore } from './store/useauthstore'
 import FetchallImage from './pages/FetchallImage'
+import SearchImageByname from './pages/SearchImageByname'
 
 
 
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/singup" element={<SingupPage/>}/>
         <Route path="/login" element={!authUser ? <LoginPage /> :<Navigate to={"/"}/>}/>
         <Route path='/images' element={<FetchallImage/>}/>
+        <Route path='/search' element={<SearchImageByname/>}/>
       </Routes>
     </div>
   )
