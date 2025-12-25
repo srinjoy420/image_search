@@ -13,9 +13,17 @@ const port = process.env.PORT || 3000
 app.use(cookieParser())
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// CORS configuration - CLIENT_URL should be your frontend URL (where requests come from)
+const clientUrl = process.env.CLIENT_URL || process.env.API_URL || "http://localhost:5173";
+// Ensure the URL has protocol
+const corsOrigin = clientUrl.startsWith('http') ? clientUrl : `https://${clientUrl}`;
+
+console.log('🌐 CORS Origin configured for:', corsOrigin);
+
 app.use(
   cors({
-    origin: process.env.API_URL || "http://localhost:5173",
+    origin: corsOrigin,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
