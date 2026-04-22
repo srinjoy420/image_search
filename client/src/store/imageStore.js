@@ -18,35 +18,34 @@ export const useImageStore = create((set, get) => ({
 
     clearSuggestions: () => set({ suggestions: [] }),
 
-    uploadImage: async ({ imageBase64, name }) => {
+    uploadImage: async ({ file, name }) => {
         set({ isLoadingImages: true, error: null })
         try {
-            const res = await axiosInstance.post("/api/image/upload", {
-                url: imageBase64,
-                name
+            const fromData=new FormData()
+            fromData.append("image",file)
+            fromData.append("name",name)
+
+            // upload image to cloudinary
+            const res=await axiosInstance.post("/api/image/upload",fromData,{
+                headers:{
+                    "Content-Type":"multipart/form-data"
+                }
             })
-            if (res.data.success) {
-                set((state) => ({
-                    images: [res.data.data, ...state.images],
-                    error: null,
-                }))
-                toast.success("Image uploaded succesfully")
-                return { success: true, image: res.data.data }
-
+            if(res.data.success){
+                set({images:[res.data.data,...state.images]})
             }
-            else {
-                set({ error: res.data.message })
-                toast.error(res.data.message || "there is a problem in uploading a image")
-            }
+            toast.success("Image uploaded successfully")
         } catch (error) {
-            const errorMessage = error.response?.data?.message
-            console.log("❌ image uploading failed:", errorMessage || error.message);
-
-            set({ error: errorMessage || "uploading error image" })
+            console.log("error to upload image in cloudenary");
+            set({error:"Image uploading error"})
+            toast.error("Image uploading error")
+            
+            
         }
-        finally {
-            set({ isLoadingImages: false })
+        finally{
+            set({isLoadingImages:false})
         }
+    
 
     },
 

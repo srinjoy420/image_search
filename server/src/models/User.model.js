@@ -21,10 +21,13 @@ const userSchema=new Schema({
     password: {
         type: String,
         required: [true, "password is required"],
-        minlength: [4, "minmum 4 charecter neede"]
+        minlength: [4, "minmum 4 charecter needed"]
 
     },
-    
+    profileImage: {
+        type: String,
+        default:"https://cdn-icons-png.flaticon.com/512/149/149071.png"
+    },
   
     refreshToken: {
         type: String,

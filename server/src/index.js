@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // CORS configuration - API_URL should be your frontend URL (where requests come from)
 app.use(cors({
-  origin:"https://image-search-mu-peach.vercel.app",
+  origin: process.env.NODE_ENV === "production" ? "https://image-search-mu-peach.vercel.app" : "http://localhost:5173",
   credentials:true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization", "Accept"],
@@ -34,3 +34,14 @@ connectDB()
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  res.status(statusCode).json({
+    success: false,
+    message,
+    errors: err.errors || []
+  });
+});

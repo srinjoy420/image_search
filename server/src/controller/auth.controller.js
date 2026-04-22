@@ -35,14 +35,14 @@ export const singUp = async (req, res) => {
     const { name, email, password } = req.body
 
     if (!name || !email || !password) {
-        throw new ApiError("all field are required", 400)
+        throw new ApiError(400, "all field are required")
     }
 
     try {
         const existUser = await User.findOne({ email })
 
         if (existUser) {
-            throw new ApiError("user already exist", 400)
+            throw new ApiError(400, "user already exist")
 
 
         }
@@ -57,6 +57,7 @@ export const singUp = async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
+            profileImage:user.profileImage
 
         };
 
@@ -102,6 +103,7 @@ export const login = async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
+             profileImage:user.profileImage
 
         };
         console.log("✅ User registered successfully:", userResponse.id);
@@ -159,6 +161,7 @@ export const checkauth = async (req, res) => {
          id: user._id,
          name: user.name,
          email: user.email,
+          profileImage:user.profileImage
      };
      console.log("find the verified user", userResponse.id);
 
@@ -168,6 +171,6 @@ export const checkauth = async (req, res) => {
    } catch (error) {
      // Fix: Add proper error handling
      console.log("❌ Error in checkauth:", error);
-     throw new ApiError("Failed to verify user", 400);
+     throw new ApiError(400, "Failed to verify user");
    }
 }

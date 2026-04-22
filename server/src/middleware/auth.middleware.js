@@ -12,7 +12,7 @@ export const isloggedin = async (req, res, next) => {
         console.log("🎫 Access token:", token ? "Found" : "Not found");
         if (!token) {
             console.log(" No access token found");
-            throw new ApiError("dont have any accesoken")
+            throw new ApiError(401, "dont have any accesoken")
 
 
         }
@@ -25,12 +25,12 @@ export const isloggedin = async (req, res, next) => {
     } catch (error) {
         console.log("❌ Authentication middleware error:", error.message);
         if (error.name === 'TokenExpiredError') {
-            throw new ApiError("Your session is expired", 404)
+            throw new ApiError(401, "Your session is expired")
         }
         if (error.name === 'JsonWebTokenError') {
-            throw new ApiError("the token is invalid")
+            throw new ApiError(401, "the token is invalid")
         }
-        throw new ApiError("something went wrong in middleware")
+        throw new ApiError(401, "something went wrong in middleware")
 
     }
 

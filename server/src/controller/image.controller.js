@@ -1,50 +1,54 @@
 import Image from "../models/image.model.js";
 import cloudinary from "../libs/Cloudenary.js";
 import User from "../models/User.model.js"
+import streamifier from "streamifier";
 
 import { ApiError } from "../utils/Api_error.js";
 import { ApiResponse } from "../utils/Api_response.js";
 
-export const UploadImage = async (req, res) => {
+
+
+
+export const uploadImage=async(req,res)=>{
   try {
-    const { url, name } = req.body;
-
-    if (!name) {
-      return res.status(400).json(new ApiResponse(400, null, "image name is required"));
+    const {name}=req.body
+    if(!name){
+      throw new ApiError("image name is required",400)
     }
-
-    if (!url) {
-      return res.status(400).json(new ApiResponse(400, null, "image url is required"));
+    if(!req.file){
+      throw new ApiError("image is required",400)
     }
-
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).json(new ApiResponse(404, null, "user not found"));
+    //Upload buffer to Cloudinary
+    const streamUpload=()=>{
+      return new Promise((resolve,reject)=>{
+        const stream=cloudinary.uploader.upload_stream({
+          folder:"uploads/images",
+        },
+        (error,result)=>{
+          if(result){
+            resolve(result)
+          }
+          else reject(error)
+        }
+      );
+       streamifier.createReadStream(req.file.buffer).pipe(stream);
+      })
     }
-
-    const uploadResponse = await cloudinary.uploader.upload(url, {
-      folder: "uploads/images",
-      resource_type: "image",
-    });
-
-    const newImage = await Image.create({
-      url: uploadResponse.secure_url,
+    const result =await streamUpload()
+    const image=await Image.create({
+      url:result.secure_url,
       name,
-      addedby: user._id,
-    });
-
-    const populatedImage = await newImage.populate("addedby", "name email");
-
-    return res
-      .status(201)
-      .json(new ApiResponse(201, populatedImage, "image uploaded successfully"));
+      addedby:req.user._id
+    })
+   const populateImage=await image.populate("addedby", "name email")
+   res.status(201).json(new ApiResponse(201,populateImage,"image uploaded successfully"))
   } catch (error) {
-    console.error("❌ Image upload failed:", error);
-    return res
-      .status(500)
-      .json(new ApiResponse(500, null, "failed to upload image"));
+    console.log("failed to upload image",error);
+    throw new ApiError("failed to upload image",500)
+    
+    
   }
-};
+}
 
 export const getallImages = async (req, res) => {
   try {
